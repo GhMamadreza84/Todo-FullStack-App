@@ -7,7 +7,7 @@ import connectDB from "../../../utils/connectDB";
 
 export const authOptions = {
   session: { strategy: "jwt" },
-  provider: [
+  providers: [
     CredentialsProvider({
       async authorize(credentials, req) {
         const { email, password } = credentials;
@@ -38,4 +38,4 @@ export const authOptions = {
   ],
 };
 
-export default NextAuth();
+export default NextAuth(authOptions);
