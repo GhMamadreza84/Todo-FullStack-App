@@ -1,7 +1,9 @@
+import HomePage from "../components/template/HomePage";
+
 export default function Home() {
   return (
     <div>
-      <h1>Todo App </h1>
+      <HomePage />
     </div>
   );
 }

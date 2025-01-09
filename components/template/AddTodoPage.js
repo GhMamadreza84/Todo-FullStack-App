@@ -6,32 +6,24 @@ import { AiOutlineFileSearch } from "react-icons/ai";
 import { MdDoneAll } from "react-icons/md";
 import RadioButton from "../element/RadioButton";
 import { ToastContainer, toast } from "react-toastify";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 const AddTodoPage = () => {
   const [title, setTitle] = useState("");
-  const [todoStatus, setTodoStatus] = useState("todo");
-  const { status } = useSession();
-  const router = useRouter();
-  console.log(todoStatus, title);
+  const [status, setStatus] = useState("todo");
   const addHandler = async () => {
     const res = await fetch("/api/todos", {
       method: "POST",
-      body: JSON.stringify({ title, todoStatus }),
+      body: JSON.stringify({ title, status }),
       headers: { "Content-Type": "application/json" },
     });
     const data = await res.json();
 
-    if (data.todoStatus === "success") {
+    if (data.status === "success") {
       setTitle("");
-      setTodoStatus("todo");
+      setStatus("todo");
       toast.success("Todo created!");
     }
   };
 
-  useEffect(() => {
-    if (status === "unauthenticated") router.replace("/signin");
-  }, [status]);
   return (
     <div className="add-form">
       <h2>
@@ -51,32 +43,32 @@ const AddTodoPage = () => {
           <RadioButton
             title="Todo"
             value="todo"
-            status={todoStatus}
-            setStatus={setTodoStatus}
+            status={status}
+            setStatus={setStatus}
           >
             <BsAlignStart />
           </RadioButton>
           <RadioButton
             title="In Progress"
             value="inProgress"
-            status={todoStatus}
-            setStatus={setTodoStatus}
+            status={status}
+            setStatus={setStatus}
           >
             <FiSettings />
           </RadioButton>
           <RadioButton
             title="Review"
             value="review"
-            status={todoStatus}
-            setStatus={setTodoStatus}
+            status={status}
+            setStatus={setStatus}
           >
             <AiOutlineFileSearch />
           </RadioButton>
           <RadioButton
             title="Done"
             value="done"
-            status={todoStatus}
-            setStatus={setTodoStatus}
+            status={status}
+            setStatus={setStatus}
           >
             <MdDoneAll />
           </RadioButton>

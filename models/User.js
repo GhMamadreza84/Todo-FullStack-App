@@ -14,7 +14,7 @@ const userSchema = new Schema({
   todos: [
     {
       title: String,
-      todoStatus: String,
+      status: String,
     },
   ],
   createdAt: {
