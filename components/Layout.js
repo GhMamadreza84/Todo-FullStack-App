@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
             </li>
             <li>
               <BiMessageSquareAdd />
-              <Link href="/">Add Todo</Link>
+              <Link href="/add-todo">Add Todo</Link>
             </li>
             <li>
               <RxDashboard />
