@@ -12,9 +12,7 @@ const HomePage = () => {
     const res = await fetch("/api/todos");
     const data = await res.json();
     if (data.status === "success") setTodos(data.data.todos);
-    console.log(data);
   };
-
   return (
     <div className="home-page">
       <div className="home-page--todo">

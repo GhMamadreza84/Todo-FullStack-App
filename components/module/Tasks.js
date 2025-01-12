@@ -20,6 +20,7 @@ const Tasks = ({ data, next, back, fetchTodos }) => {
           <span className={i.status}></span>
           <RiMastodonLine />
           <h4>{i.title}</h4>
+          <span>{i.description}</span>
           <div>
             {back ? (
               <button

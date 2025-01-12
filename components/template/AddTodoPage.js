@@ -8,17 +8,19 @@ import RadioButton from "../element/RadioButton";
 import { ToastContainer, toast } from "react-toastify";
 const AddTodoPage = () => {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [status, setStatus] = useState("todo");
   const addHandler = async () => {
     const res = await fetch("/api/todos", {
       method: "POST",
-      body: JSON.stringify({ title, status }),
+      body: JSON.stringify({ title, description, status }),
       headers: { "Content-Type": "application/json" },
     });
     const data = await res.json();
 
     if (data.status === "success") {
       setTitle("");
+      setDescription("");
       setStatus("todo");
       toast.success("Todo created!");
     }
@@ -38,6 +40,13 @@ const AddTodoPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+        </div>
+        <div className="add-form__input--first">
+          <label htmlFor="description">Description:</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          ></textarea>
         </div>
         <div className="add-form__input--second">
           <RadioButton
