@@ -4,31 +4,91 @@ import { BsAlignStart } from "react-icons/bs";
 import { FiSettings } from "react-icons/fi";
 import { AiOutlineFileSearch } from "react-icons/ai";
 import { MdDoneAll } from "react-icons/md";
-import RadioButton from "../element/RadioButton";
 import { ToastContainer, toast } from "react-toastify";
-const AddTodoPage = () => {
+import { EditIcon } from "../../public/icons";
+import { useRouter } from "next/router";
+import RadioButton from "../../components/element/RadioButton";
+import { ImDiamonds } from "react-icons/im";
+const EditTodoPage = () => {
+  const [todo, setTodo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("todo");
-  const addHandler = async () => {
+  const router = useRouter();
+  const { id } = router.query;
+  useEffect(() => {
+    if (todo) {
+      setTitle(todo.title || "");
+      setDescription(todo.description || "");
+      setStatus(todo.status || "");
+    }
+  }, [todo]);
+  useEffect(() => {
+    if (!id) return;
+    async function fetchTodo() {
+      try {
+        const res = await fetch(`/api/todos?id=${id}`);
+        const data = await res.json();
+
+        if (data.status === "failed") {
+          setError("Todo not found");
+        } else {
+          let foundedTodo = null;
+          for (const category in data.data.todos) {
+            const found = data.data.todos[category].find(
+              (task) => task._id === id
+            );
+            if (found) {
+              foundedTodo = found;
+              break;
+            }
+          }
+          if (!foundedTodo) {
+            setError("Todo not found");
+          } else {
+            setTodo(foundedTodo);
+          }
+        }
+      } catch (err) {
+        setError("Failed to fetch todo");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTodo();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
+  const submitHandler = async () => {
     const res = await fetch("/api/todos", {
-      method: "POST",
-      body: JSON.stringify({ title, description, status }),
-      headers: { "Content-Type": "application/json" },
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+        title,
+        description,
+        status,
+      }),
     });
     const data = await res.json();
-
-    if (data.status === "success") {
-      setTitle("");
-      setDescription("");
-      setStatus("todo");
-      toast.success("Todo created!");
+    if (res.ok) {
+      console.log("Todo updated", data);
+    } else {
+      console.error("Error updatind todo:", data.message);
     }
+    router.replace("/");
   };
+
   return (
     <div className="add-form">
       <h2>
-        <GrAddCircle /> Add New Todo
+        <EditIcon /> Edit Todo
       </h2>
       <div className="add-form__input">
         <div className="add-form__input--first">
@@ -81,11 +141,11 @@ const AddTodoPage = () => {
             <MdDoneAll />
           </RadioButton>
         </div>
-        <button onClick={() => addHandler()}>Add</button>
+        <button onClick={() => submitHandler()}>Edit</button>
       </div>
       <ToastContainer />
     </div>
   );
 };
 
-export default AddTodoPage;
+export default EditTodoPage;
