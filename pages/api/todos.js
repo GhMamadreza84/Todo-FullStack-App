@@ -107,7 +107,7 @@ async function handler(req, res) {
         .status(500)
         .json({ status: "failed", message: "Internal Server Error!" });
     }
-  }
+  } 
 }
 
 export default handler;

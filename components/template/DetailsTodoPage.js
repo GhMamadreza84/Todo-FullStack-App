@@ -2,56 +2,40 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const DetailsTodoPage = () => {
-  const [task, setTask] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const router = useRouter();
-  const { id } = router.query;
+const DetailsTodoPage = ({ id }) => {
+  const [todos, setTodos] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  const fetchTaskDetails = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`/api/todos/${id}`);
-      if (!res.ok) {
-        throw new Error("Task not found");
-      }
-      const data = await res.json();
-      setTask(data);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching task details:", err.message);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  async function fetchTodoDetail() {
+    const res = await fetch("/api/todos", {
+      method: "GET",
+    });
+    const data = await res.json();
+    setTodos(data.data);
+  }
 
   useEffect(() => {
-    if (id) {
-      fetchTaskDetails();
+    fetchTodoDetail();
+  }, []);
+
+  useEffect(() => {
+    if (todos && id) {
+      const task = Object.values(todos.todos)
+        .flat()
+        .find((task) => task._id === id);
+      setSelectedTask(task || null);
     }
-  }, [id]);
+  }, [todos, id]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!task) {
-    return <p>Task not found</p>;
-  }
+  if (!selectedTask) return <p>Loading ...</p>;
 
   return (
-    <div>
-      <h1>Details Todo Page</h1>
+    <div className="details__container">
+      <h1 className="details__header">Details Todo Page</h1>
       <div>
-        <h2>Title: {task.title}</h2>
-        <h3>Description: {task.description}</h3>
-        <h4>Status: {task.status}</h4>
+        <h2>Status: {selectedTask.status}</h2>
+        <h2>Title: {selectedTask.title}</h2>
+        <h3>Description: {selectedTask.description}</h3>
       </div>
       <Link href="/">
         <button style={{ marginTop: "20px" }}>Back to home</button>

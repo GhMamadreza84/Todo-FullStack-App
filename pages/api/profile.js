@@ -49,12 +49,41 @@ async function handler(req, res) {
       data: { name, lastName, email: session.user.email },
     });
   } else if (req.method === "GET") {
-    res
-      .status(200)
-      .json({
-        status: "success",
-        data: { name: user.name, lastName: user.lastName, email: user.email },
+    res.status(200).json({
+      status: "success",
+      data: { name: user.name, lastName: user.lastName, email: user.email },
+    });
+  } else if (req.method === "PUT") {
+    const { name, lastName, email } = req.body;
+
+    if (!name || !lastName || !email) {
+      return res.status(400).json({
+        status: "failed",
+        message: "All fields are required!",
       });
+    }
+
+    try {
+      console.log("Attempting to update user profile...");
+      const result = await User.updateOne(
+        { email },
+        { $set: { name, lastName, email } }
+      );
+
+      if (result.modifiedCount === 1) {
+        console.log("Profile updated successfully.");
+        return res.status(200).json({
+          status: "success",
+          message: "Profile updated successfully!",
+        });
+      } else {
+        console.log("User not found.");
+        return res.status(404).json({ message: "User not found." });
+      }
+    } catch (err) {
+      console.error("Error updating user:", err);
+      return res.status(500).json({ message: "Internal server error." });
+    }
   }
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import ProfileForm from "../module/ProfileForm";
 import ProfileData from "../module/ProfileData";
+import Link from "next/link";
 
 const ProfilePage = () => {
   const [name, setName] = useState("");
@@ -27,8 +28,9 @@ const ProfilePage = () => {
       headers: { "Content-Type": "application/json" },
     });
     const data = await res.json();
-    console.log(data);
   };
+
+  console.log(data);
 
   return (
     <div className="profile-form">
@@ -50,6 +52,9 @@ const ProfilePage = () => {
           submitHandler={submitHandler}
         />
       )}
+      <Link href="/profile/edit-profile">
+        <button>Edit Profile</button>
+      </Link>
     </div>
   );
 };
